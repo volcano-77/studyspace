@@ -71,7 +71,7 @@
 
 ## 推荐阅读顺序
 
-1. 先阅读仓库根目录的 [作品集 README](../README.md)。
+1. 先阅读仓库根目录的 [项目 README](../README.md)。
 2. 阅读 [测试分析](./test-analysis.md)，再选择一份模块执行报告了解测试策略和执行方式。
 3. 阅读 [缺陷报告](./bug-report.md) 查看发现证据、修复记录和Known Issues。
 4. 阅读 [最终封版回归](./test-execution-final-regression.md) 查看修复后15/15验证结果。

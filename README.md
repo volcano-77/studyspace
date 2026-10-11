@@ -132,4 +132,4 @@ npm run dev
 - `BUG-FILE-003`：`uploads` 静态资源仍可通过直接 URL 匿名访问。
 - `BUG-FILE-004`：文件类型和 MIME 限制仍需完善。
 
-其他未修复问题及复现证据见 [Bug 报告](docs/bug-report.md)。当前版本主要用于学习、测试实践和本地运行。
+其他未修复问题及复现证据见 [Bug 报告](docs/bug-report.md)。当前版本以本地运行与测试验证为范围，尚未面向公网部署。

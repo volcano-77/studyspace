@@ -202,7 +202,7 @@
 | 验证批次 | `20260917124504`，真实后端 `http://localhost:3001` |
 | 修改文件 | `server/index.js`，增加共享长度校验及四个密码写入处理器的调用 |
 | 统一规则 | 设置新密码至少4位，沿用已有前端的JavaScript字符串 `.length` 语义；不增加复杂度或最大长度策略 |
-| 修复 commit | [`bbbccb9a4eb4b61eb9b052de7e946bdba805d672`](https://github.com/volcano-77/graduation-study-system/commit/bbbccb9a4eb4b61eb9b052de7e946bdba805d672) — `fix: enforce minimum password length` |
+| 修复 commit | [`bbbccb9a4eb4b61eb9b052de7e946bdba805d672`](https://github.com/volcano-77/studyspace/commit/bbbccb9a4eb4b61eb9b052de7e946bdba805d672) — `fix: enforce minimum password length` |
 
 **实际影响入口与原有规则：**
 
@@ -348,7 +348,7 @@ SQL确认非法邮箱真实写入现有用户：
 | 修复后验证批次 | `20260917131115`，真实后端 `http://localhost:3001` |
 | 修改文件 | `server/index.js`，新增共享邮箱格式校验并接入全部实际邮箱写入口 |
 | 统一规则 | trim并转为小写后必须匹配 `^[^\s@]+@[^\s@]+\.[^\s@]+$`；不增加域名可达性、MX、复杂度或最大长度策略 |
-| 修复 commit | [`f0c6e03762b68cedd30f2ff0dba3d80ca1e36846`](https://github.com/volcano-77/graduation-study-system/commit/f0c6e03762b68cedd30f2ff0dba3d80ca1e36846) — `fix: validate user email formats` |
+| 修复 commit | [`f0c6e03762b68cedd30f2ff0dba3d80ca1e36846`](https://github.com/volcano-77/studyspace/commit/f0c6e03762b68cedd30f2ff0dba3d80ca1e36846) — `fix: validate user email formats` |
 
 **实际影响入口与根因：** 前端注册页和管理员用户表单使用HTML `type="email"`，只能约束正常页面提交；后端没有可复用的邮箱校验器，只检查必填或直接写库。源码定位确认实际写邮箱的入口为共享处理器下的 `POST /api/register` 与兼容路由 `POST /register`、管理员创建 `POST /api/admin/users`、管理员编辑 `PUT /api/admin/users/:id`、旧资料更新 `PUT /api/users/:id`。其中管理员编辑也是同类受影响入口；`PUT /api/user/profile` 不写邮箱，其余email引用为读取、搜索或展示。
 
@@ -570,7 +570,7 @@ C 已登录但不属于 group 31。使用 C 的有效登录状态直接调用普
 | 修复日期 | 2026-09-18（UTC+8） |
 | 验证批次 | `20260918105158`，真实后端 `http://localhost:3001`、本地 MySQL |
 | 修改文件 | `server/index.js` |
-| 修复 commit | [`301a46a87bd4cdc1bbde0ff0f4f37158d81ceb1c`](https://github.com/volcano-77/graduation-study-system/commit/301a46a87bd4cdc1bbde0ff0f4f37158d81ceb1c) — `fix: enforce task group permissions` |
+| 修复 commit | [`301a46a87bd4cdc1bbde0ff0f4f37158d81ceb1c`](https://github.com/volcano-77/studyspace/commit/301a46a87bd4cdc1bbde0ff0f4f37158d81ceb1c) — `fix: enforce task group permissions` |
 
 **实际接口与原权限模型：** 普通任务入口共有 `GET /api/tasks`、`POST /api/tasks`、`PUT /api/tasks/:id` 和 `DELETE /api/tasks/:id`，原来均只有 `requireAuthUser`。GET指定group时直接查询、不带group时返回全表；POST直接信任请求中的 `group_id`；PUT和DELETE直接按task id写库，没有先查任务真实归属。普通PUT只支持修改状态，前端也没有普通成员编辑任务内容功能；内容编辑只存在于独立的管理员 `PUT /api/admin/tasks/:taskId`。`GET /api/global/tasks` 原本已经按owner/member过滤。
 
@@ -801,7 +801,7 @@ GET只校验登录，未调用成员访问检查；POST发现没有成员记录�
 | 修复日期 | 2026-09-18（UTC+8） |
 | 验证批次 | `20260918111027`，真实后端 `http://localhost:3001`、本地 MySQL |
 | 修改文件 | `server/index.js` |
-| 修复 commit | [`cda0f0f70860ad03d5a06fee10b2c2ea7814d80a`](https://github.com/volcano-77/graduation-study-system/commit/cda0f0f70860ad03d5a06fee10b2c2ea7814d80a) — `fix: enforce discussion group permissions` |
+| 修复 commit | [`cda0f0f70860ad03d5a06fee10b2c2ea7814d80a`](https://github.com/volcano-77/studyspace/commit/cda0f0f70860ad03d5a06fee10b2c2ea7814d80a) — `fix: enforce discussion group permissions` |
 
 **实际接口与原权限模型：** 普通讨论REST入口只有 `GET /api/groups/:id/discussions` 和 `POST /api/groups/:id/discussions`，两条路由原来均只有 `requireAuthUser`，没有校验当前用户是否为目标小组组长或成员。项目不存在普通讨论删除接口、按discussionId操作接口或独立管理员讨论管理接口，因此本轮没有虚构这些用例。前端讨论区通过上述GET/POST完成列表读取和发送，POST成功后仍由既有Socket广播更新消息。
 
@@ -976,7 +976,7 @@ GET和POST都使用 `Number.parseInt`；GET随后直接查询 discussions，没�
 | 修复日期 | 2026-09-18（UTC+8） |
 | 验证批次 | `20260918065543`，真实后端 `http://localhost:3001`、真实前端 `http://localhost:5173` |
 | 修改文件 | `server/index.js`、`src/pages/GroupDetail.jsx` |
-| 修复 commit | [`d144f851e89e1b07d6c5edf5df0c7e5eebd3a4e8`](https://github.com/volcano-77/graduation-study-system/commit/d144f851e89e1b07d6c5edf5df0c7e5eebd3a4e8) — `fix: enforce file access permissions` |
+| 修复 commit | [`d144f851e89e1b07d6c5edf5df0c7e5eebd3a4e8`](https://github.com/volcano-77/studyspace/commit/d144f851e89e1b07d6c5edf5df0c7e5eebd3a4e8) — `fix: enforce file access permissions` |
 
 **实际接口范围与原权限模型：** `GET /api/groups/:groupId/files`、`POST /api/groups/:groupId/files`、`DELETE /api/groups/:groupId/files/:fileId` 原来均没有 `requireAuthUser`；列表不检查成员，上传不检查成员且Multer直接落盘，删除不检查调用者与文件关系。`GET /api/files/recent`、`GET /api/files/all` 原本已有认证和owner/member范围过滤；管理员 `GET /api/admin/files`、`DELETE /api/admin/files/:fileId` 原本已有认证与管理员校验；旧 `shared_files` 表的接口也已有认证与成员/归属校验。没有按fileId下载的业务API，物理文件仍通过 `/uploads` 静态路由访问，后者属于BUG-FILE-003，本次未改。
 
@@ -1051,7 +1051,7 @@ GET和POST都使用 `Number.parseInt`；GET随后直接查询 discussions，没�
 | 修复日期 | 2026-09-18（UTC+8） |
 | 验证批次 | `20260918065543`，与BUG-FILE-001共用临时权限验证环境 |
 | 修改文件 | `server/index.js`、`src/pages/GroupDetail.jsx` |
-| 修复 commit | [`d144f851e89e1b07d6c5edf5df0c7e5eebd3a4e8`](https://github.com/volcano-77/graduation-study-system/commit/d144f851e89e1b07d6c5edf5df0c7e5eebd3a4e8) — `fix: enforce file access permissions` |
+| 修复 commit | [`d144f851e89e1b07d6c5edf5df0c7e5eebd3a4e8`](https://github.com/volcano-77/studyspace/commit/d144f851e89e1b07d6c5edf5df0c7e5eebd3a4e8) — `fix: enforce file access permissions` |
 
 **根因：** 普通文件上传接口直接解析 multipart 中的 `req.body.uploader_id` 并写入 `group_files.uploader_id`，没有认证上下文；前端正常流程也主动发送该字段。因此调用者可以匿名提交任意已有用户ID，数据库无法区分真实上传者与被冒用身份。
 
@@ -1235,7 +1235,7 @@ multer 仅配置磁盘存储和文件名，没有 `fileFilter`、MIME/扩展名�
 | 修复日期 | 2026-09-18（UTC+8） |
 | 验证批次 | `20260918030850`，真实前端 `http://localhost:5173`、真实后端 `http://localhost:3001` |
 | 修改文件 | `src/pages/AllFiles.jsx`，只修正资料集锦“获取”链接的 URL 解析 |
-| 修复 commit | [`7b3a8771ad3534772af4101cf066aed35016a4d0`](https://github.com/volcano-77/graduation-study-system/commit/7b3a8771ad3534772af4101cf066aed35016a4d0) — `fix: resolve file download URLs` |
+| 修复 commit | [`7b3a8771ad3534772af4101cf066aed35016a4d0`](https://github.com/volcano-77/studyspace/commit/7b3a8771ad3534772af4101cf066aed35016a4d0) — `fix: resolve file download URLs` |
 
 **根因：** 后端 `group_files.file_url` 保存并返回 `/uploads/...` 相对路径，物理文件由 Express 在3001端口的 `/uploads` 静态路由提供。资料集锦页面原先直接把该相对路径赋给 `<a href>`，浏览器按照当前页面 origin 把它解析为5173端口；Vite 对该路径回退到前端 `index.html`，因此出现HTTP 200但内容不是目标文件。Dashboard和小组详情页已经使用 `API_BASE_URL` 补全相对文件地址，资料集锦页面未采用同一规则。
 
@@ -1348,7 +1348,7 @@ Content-Type: application/json
 | 修复日期 | 2026-09-17（UTC+8） |
 | 验证批次 | `20260917053942`，13:39:42～13:39:49 |
 | 修改文件 | `server/index.js`，管理员用户 PUT / DELETE 两处 ID 校验 |
-| 修复 commit | [`0cc03e0c75932d712e0dd79451821c2864844ab6`](https://github.com/volcano-77/graduation-study-system/commit/0cc03e0c75932d712e0dd79451821c2864844ab6) — `fix: validate admin user ids strictly` |
+| 修复 commit | [`0cc03e0c75932d712e0dd79451821c2864844ab6`](https://github.com/volcano-77/studyspace/commit/0cc03e0c75932d712e0dd79451821c2864844ab6) — `fix: validate admin user ids strictly` |
 
 **根因与修复方式：** PUT 和 DELETE 都使用 `Number.parseInt(req.params.id, 10)`，数字前缀会被截取成真实 ID。项目没有可复用的严格 ID helper；本次仅将这两处改为 `Number(req.params.id)`，并同时要求原始参数匹配 `/^[1-9]\d*$/`、转换结果满足 `Number.isSafeInteger()`。非法参数在目标用户查询、更新或删除前返回 HTTP 400、`success:false`、`message:"无效的用户ID"`。鉴权中间件正常读取当前登录管理员不属于目标用户业务查询。没有 GET `/api/admin/users/:id` 接口；现有 GET 为用户列表，不需要添加 ID 校验。
 
@@ -1440,7 +1440,7 @@ Content-Type: application/json
 | 修复前复现批次 | `20260917132931`，真实后端 `http://localhost:3001` |
 | 修复后验证批次 | `20260917133226`，真实后端 `http://localhost:3001` |
 | 修改文件 | `server/index.js`，仅修改管理员强制解散小组处理器 |
-| 修复 commit | [`482c6bfd377d157a52d82660d99be725331f3fae`](https://github.com/volcano-77/graduation-study-system/commit/482c6bfd377d157a52d82660d99be725331f3fae) — `fix: remove group files on admin delete` |
+| 修复 commit | [`482c6bfd377d157a52d82660d99be725331f3fae`](https://github.com/volcano-77/studyspace/commit/482c6bfd377d157a52d82660d99be725331f3fae) — `fix: remove group files on admin delete` |
 
 **根因与修复前流程：** `DELETE /api/admin/groups/:id` 原来只读取目标小组id，在数据库事务中显式删除notifications、group_members、discussions、tasks、shared_files后删除groups_table；group_files依靠 `ON DELETE CASCADE` 自动清理。处理器从未在级联发生前读取 `group_files.file_url`，也没有调用文件系统删除，事务提交后数据库已失去物理文件路径。现有管理员单文件销毁和普通单文件删除接口则会先按精确记录读取file_url，再以basename定位uploads内文件并调用 `fs.unlinkSync`。
 
