@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Bell,
@@ -15,11 +15,10 @@ import {
 import apiClient from '../api/client';
 import { getNotificationBadgeCount } from '../utils/notifications';
 
-function readUserFromStorage() {
+function readUserStorageValue() {
   try {
-    const raw = localStorage.getItem('user');
-    return raw ? JSON.parse(raw) : null;
-  } catch (error) {
+    return localStorage.getItem('user');
+  } catch {
     return null;
   }
 }
@@ -28,7 +27,15 @@ function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [currentUser, setCurrentUser] = useState(() => readUserFromStorage());
+  const [, refreshUser] = useReducer((revision) => revision + 1, 0);
+  const userStorageValue = readUserStorageValue();
+  const currentUser = useMemo(() => {
+    try {
+      return userStorageValue ? JSON.parse(userStorageValue) : null;
+    } catch {
+      return null;
+    }
+  }, [userStorageValue]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notificationBadgeCount, setNotificationBadgeCount] = useState(0);
   const menuRef = useRef(null);
@@ -52,7 +59,7 @@ function Sidebar() {
       }
 
       setNotificationBadgeCount(getNotificationBadgeCount(data.notifications));
-    } catch (error) {
+    } catch {
       setNotificationBadgeCount(0);
     }
   }, [isAdmin]);
@@ -64,12 +71,8 @@ function Sidebar() {
   }, [navigate, currentUser]);
 
   useEffect(() => {
-    setCurrentUser(readUserFromStorage());
-  }, [location.pathname]);
-
-  useEffect(() => {
     const handleUserAvatarUpdated = () => {
-      setCurrentUser(readUserFromStorage());
+      refreshUser();
     };
 
     window.addEventListener('userAvatarUpdated', handleUserAvatarUpdated);
@@ -79,7 +82,9 @@ function Sidebar() {
   }, []);
 
   useEffect(() => {
-    fetchUnreadNotifications();
+    queueMicrotask(() => {
+      fetchUnreadNotifications();
+    });
   }, [fetchUnreadNotifications]);
 
   useEffect(() => {

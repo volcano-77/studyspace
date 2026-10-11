@@ -3,13 +3,13 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { io } from 'socket.io-client';
 import apiClient, { API_BASE_URL } from '../api/client';
-import { useMessage } from '../context/MessageContext';
+import { useMessage } from '../context/useMessage';
 
 function readUserFromStorage() {
   try {
     const raw = localStorage.getItem('user');
     return raw ? JSON.parse(raw) : null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -23,10 +23,6 @@ function Layout() {
   const hideTimerRef = useRef(null);
   const activeDiscussionRef = useRef({ groupId: null, isDiscussion: false });
   const groupNameMapRef = useRef(new Map());
-
-  useEffect(() => {
-    setCurrentUser(readUserFromStorage());
-  }, []);
 
   useEffect(() => {
     const refreshUser = () => {
@@ -98,7 +94,7 @@ function Layout() {
           nextGroupNameMap.set(normalizedGroupId, group.name || `小组 #${normalizedGroupId}`);
         });
         groupNameMapRef.current = nextGroupNameMap;
-      } catch (error) {
+      } catch {
         // 静默处理，避免影响页面主流程
       }
     };

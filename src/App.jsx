@@ -25,7 +25,7 @@ function getCurrentUser() {
   }
   try {
     return JSON.parse(raw);
-  } catch (error) {
+  } catch {
     return null;
   }
 }

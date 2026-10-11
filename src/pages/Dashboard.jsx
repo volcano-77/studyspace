@@ -106,30 +106,23 @@ function formatRecentTime(value) {
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('同学');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [stats, setStats] = useState(EMPTY_DASHBOARD);
-  const [groups, setGroups] = useState([]);
-  const [tasks, setTasks] = useState([]);
-  const [recentFiles, setRecentFiles] = useState([]);
-  const [activePieIndex, setActivePieIndex] = useState(-1);
-
-  useEffect(() => {
+  const [username] = useState(() => {
     try {
       const userStr = localStorage.getItem('user');
-      if (!userStr) {
-        return;
-      }
-
-      const user = JSON.parse(userStr);
-      if (user?.username) {
-        setUsername(user.username);
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        return user?.username || '同学';
       }
     } catch (parseError) {
       console.error('读取用户信息失败:', parseError);
     }
-  }, []);
+    return '同学';
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [stats, setStats] = useState(EMPTY_DASHBOARD);
+  const [recentFiles, setRecentFiles] = useState([]);
+  const [activePieIndex, setActivePieIndex] = useState(-1);
 
   useEffect(() => {
     let mounted = true;
@@ -188,8 +181,6 @@ function Dashboard() {
           ? groupsPayload.length
           : Number(statsPayload?.groupCount) || 0;
 
-      setGroups(groupsPayload);
-      setTasks(tasksPayload);
       setRecentFiles(recentFilesPayload);
       setStats({
         groupCount: finalGroupCount,

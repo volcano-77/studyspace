@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Trash2 } from 'lucide-react';
 import apiClient from '../api/client';
-import { useMessage } from '../context/MessageContext';
+import { useMessage } from '../context/useMessage';
 
 const INITIAL_CONFIRM_MODAL = {
   isOpen: false,

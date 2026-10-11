@@ -134,7 +134,7 @@ function parseUserIdFromAuthHeader(authorization = '') {
         }
 
         return userId;
-    } catch (error) {
+    } catch {
         return null;
     }
 }

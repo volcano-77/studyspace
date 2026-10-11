@@ -16,7 +16,7 @@ import { Mention, MentionsInput } from 'react-mentions';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 import apiClient, { API_BASE_URL } from '../api/client';
-import { useMessage } from '../context/MessageContext';
+import { useMessage } from '../context/useMessage';
 
 const STATUS_OPTIONS = ['待处理', '进行中', '已完成'];
 
@@ -223,7 +223,7 @@ function GroupDetail() {
   const currentGroupIdNumber = Number(groupId);
   const currentUnread = Number.isInteger(currentGroupIdNumber) ? Number(unreadCounts[currentGroupIdNumber] || 0) : 0;
 
-  const fetchGroupAndTasks = async () => {
+  const fetchGroupAndTasks = useCallback(async () => {
     setLoading(true);
     setError('');
 
@@ -244,9 +244,9 @@ function GroupDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [groupId]);
 
-  const fetchMembers = async () => {
+  const fetchMembers = useCallback(async () => {
     setMemberLoading(true);
     setMemberError('');
 
@@ -263,7 +263,7 @@ function GroupDetail() {
     } finally {
       setMemberLoading(false);
     }
-  };
+  }, [groupId]);
 
   const fetchDiscussions = useCallback(
     async (options = {}) => {
@@ -294,7 +294,7 @@ function GroupDetail() {
     [groupId]
   );
 
-  const fetchSharedFiles = async () => {
+  const fetchSharedFiles = useCallback(async () => {
     setFileLoading(true);
     setFileError('');
 
@@ -311,7 +311,7 @@ function GroupDetail() {
     } finally {
       setFileLoading(false);
     }
-  };
+  }, [groupId]);
 
   useEffect(() => {
     try {
@@ -333,7 +333,7 @@ function GroupDetail() {
     setSearchQuery('');
     setSearchResults([]);
     setSelectedInviteUser(null);
-  }, [groupId, fetchDiscussions]);
+  }, [groupId, fetchGroupAndTasks, fetchMembers, fetchDiscussions, fetchSharedFiles]);
 
   useEffect(() => {
     const tabFromSearch = resolveTabFromSearch(searchParams);

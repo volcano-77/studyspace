@@ -71,7 +71,7 @@ function Notifications() {
     try {
       await apiClient.put('/api/notifications/mark-read', {});
       window.dispatchEvent(new CustomEvent('notifications-updated', { detail: { unreadCount: 0 } }));
-    } catch (requestError) {
+    } catch {
       // 静默失败，避免影响消息列表展示
     }
   }, []);

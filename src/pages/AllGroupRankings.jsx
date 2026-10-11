@@ -10,7 +10,7 @@ function AllGroupRankings() {
     try {
       const raw = localStorage.getItem('user');
       return raw ? JSON.parse(raw) : null;
-    } catch (error) {
+    } catch {
       return null;
     }
   }, []);
